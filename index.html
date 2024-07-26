@@ -1,52 +1,55 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AR.js Web App</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/aframe/1.2.0/aframe.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ar.js/2.2.2/aframe-ar.js"></script>
-    <script>
-        AFRAME.registerComponent('ar-handler', {
-            init: function () {
-                if (!AFRAME.utils.device.isMobile()) {
-                    document.querySelector('.desktop-message').style.display = 'block';
-                }
-                
-                if (!navigator.xr) {
-                    console.warn('WebXR non supportato su questo browser.');
-                    document.querySelector('.webxr-message').style.display = 'block';
-                } else {
-                    navigator.xr.isSessionSupported('immersive-ar')
-                        .then((supported) => {
-                            if (!supported) {
-                                console.warn('AR non supportata su questo dispositivo.');
-                                document.querySelector('.ar-message').style.display = 'block';
-                            }
-                        })
-                        .catch((error) => {
-                            console.error('Errore nel controllo del supporto AR:', error);
-                            document.querySelector('.error-message').style.display = 'block';
-                        });
-                }
-            }
-        });
-    </script>
-    <style>
-        .message { display: none; position: fixed; top: 0; left: 0; width: 100%; padding: 10px; background: #f44336; color: white; text-align: center; z-index: 9999; }
-    </style>
-</head>
-<body style="margin: 0; overflow: hidden;">
-    <div class="message desktop-message">Questa applicazione funziona meglio su dispositivi mobili.</div>
-    <div class="message webxr-message">Il tuo browser non supporta WebXR. Prova con un browser più recente.</div>
-    <div class="message ar-message">Il tuo dispositivo non supporta la Realtà Aumentata.</div>
-    <div class="message error-message">Si è verificato un errore. Ricarica la pagina o prova con un altro dispositivo.</div>
+import React, { useState } from 'react';
+import { ExternalLink } from 'lucide-react';
 
-    <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;" ar-handler>
-        <a-marker preset="hiro">
-            <a-box position="0 0.5 0" material="color: red;"></a-box>
-        </a-marker>
-        <a-entity camera></a-entity>
-    </a-scene>
-</body>
-</html>
+const LifestyleWebApp = () => {
+  const [externalLink, setExternalLink] = useState('');
+
+  const handleLinkChange = (e) => {
+    setExternalLink(e.target.value);
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 flex items-center justify-center">
+      <div className="bg-white p-8 rounded-lg shadow-xl max-w-md w-full">
+        <h1 className="text-3xl font-bold mb-6 text-gray-800">Lifestyle Hub</h1>
+        <p className="text-gray-600 mb-6">Scopri il tuo stile di vita ideale e connettiti con contenuti ispiranti.</p>
+        
+        <div className="mb-6">
+          <label htmlFor="externalLink" className="block text-sm font-medium text-gray-700 mb-2">
+            Inserisci il link alla pagina web:
+          </label>
+          <input
+            type="url"
+            id="externalLink"
+            value={externalLink}
+            onChange={handleLinkChange}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+            placeholder="https://esempio.com"
+          />
+        </div>
+        
+        {externalLink && (
+          <a
+            href={externalLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors"
+          >
+            Visita il sito <ExternalLink className="ml-2 h-4 w-4" />
+          </a>
+        )}
+        
+        <div className="mt-8 grid grid-cols-2 gap-4">
+          <button className="bg-pink-500 text-white py-2 px-4 rounded-md hover:bg-pink-600 transition-colors">
+            Esplora Tendenze
+          </button>
+          <button className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-colors">
+            Consigli Personalizzati
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default LifestyleWebApp;
